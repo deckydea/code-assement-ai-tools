@@ -1,5 +1,5 @@
 /**
- * Mudah — Struktur & standardisasi nama (mendukung perencanaan naming).
+ * Struktur & standardisasi nama (mendukung perencanaan naming).
  * Buat slug URL aman:
  * - lowercase, trim
  * - ganti whitespace (1+ spasi/tab) -> '-'

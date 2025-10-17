@@ -18,7 +18,7 @@ const succeedOn3 = async () => {
   try {
     await retryWithBackoffBuggy(async()=>{ throw new Error('x'); }, 2);
   } catch (e) { caught = true; }
-  assert.ok(caught);
+  assert.ok(caught, 'should throw after all attempts');
 
   console.log('✅ cursor: bugfix_retry_backoff');
 })().catch(e=>{ throw e; });
