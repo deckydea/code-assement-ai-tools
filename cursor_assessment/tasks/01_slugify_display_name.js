@@ -1,17 +1,30 @@
 function slugify(s) {
-  if (s === undefined || s === null) {
-    return '';
+  if (s == null) return "";
+
+  // trim
+  let out = String(s).trim();
+
+  // normalize accents/diacritics when possible and strip combining marks
+  if (typeof out.normalize === "function") {
+    out = out.normalize("NFKD");
   }
+  out = out.replace(/[\u0300-\u036f]/g, "");
 
-  const normalized = String(s).toLowerCase().trim();
-  if (!normalized) {
-    return '';
-  }
+  // lowercase
+  out = out.toLowerCase();
 
-  const withHyphens = normalized.replace(/\s+/g, '-');
-  const filtered = withHyphens.replace(/[^a-z0-9_-]/g, '');
-  const compressed = filtered.replace(/-+/g, '-');
+  // replace any whitespace runs with a single hyphen
+  out = out.replace(/\s+/g, "-");
 
-  return compressed.replace(/^-+|-+$/g, '');
+  // filter: allow only lowercase letters, digits, underscore and hyphen
+  out = out.replace(/[^a-z0-9_-]+/g, "");
+
+  // compress multiple hyphens
+  out = out.replace(/-+/g, "-");
+
+  // remove leading/trailing hyphens
+  out = out.replace(/^-+|-+$/g, "");
+
+  return out;
 }
 module.exports = { slugify };

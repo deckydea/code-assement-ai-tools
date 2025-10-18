@@ -1,55 +1,41 @@
 function parseQuery(aqs) {
-  // Return empty object for empty string
-  if (!aqs) {
-    return {};
-  }
+  // Return empty object if input is falsy or empty
+  if (!aqs) return {};
 
   const result = {};
-  
-  // Split by '&' to get individual key-value pairs
-  const pairs = aqs.split('&');
-  
-  for (const pair of pairs) {
-    // Skip empty entries (e.g., from '&&&')
-    if (!pair) {
-      continue;
-    }
-    
-    // Split by '=' to separate key and value
-    const equalIndex = pair.indexOf('=');
-    
-    let key, value;
-    
-    if (equalIndex === -1) {
-      // No '=' means it's a flag, value is empty string
-      key = pair;
-      value = '';
-    } else {
-      key = pair.substring(0, equalIndex);
-      value = pair.substring(equalIndex + 1);
-    }
-    
-    // Skip if key is empty (e.g., '=x')
-    if (!key) {
-      continue;
-    }
-    
-    // Replace '+' with space for both key and value
-    key = key.replace(/\+/g, ' ');
-    value = value.replace(/\+/g, ' ');
-    
-    // Decode URI components
-    try {
-      key = decodeURIComponent(key);
-      value = decodeURIComponent(value);
-    } catch (e) {
-      // If decoding fails, use as-is
-    }
-    
-    // Store in result (last value wins if key repeats)
-    result[key] = value;
+
+  // Remove leading '?' if present
+  const queryString = aqs.startsWith("?") ? aqs.substring(1) : aqs;
+
+  // Split the query string by '&' to get key-value pairs
+  const pairs = queryString.split("&");
+
+  for (let pair of pairs) {
+    // Skip empty entries
+    if (!pair) continue;
+
+    // Split each pair by '=' to separate key and value
+    const [key, value] = pair.split("=").map((part, index) => {
+      // Replace '+' with spaces first, then decode
+      const decoded = part ? part.replace(/\+/g, " ") : "";
+
+      try {
+        // Only decode if there's content to decode
+        return decoded ? decodeURIComponent(decoded) : "";
+      } catch (e) {
+        // If decoding fails, return the original string
+        return decoded;
+      }
+    });
+
+    // Skip entries with empty keys
+    if (!key) continue;
+
+    // Set value (or empty string if value is undefined)
+    result[key] = value !== undefined ? value : "";
   }
-  
+
   return result;
 }
+
 module.exports = { parseQuery };
