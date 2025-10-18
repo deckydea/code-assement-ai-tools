@@ -7,7 +7,8 @@ async function retryWithBackoffBuggy(fn, retries) {
     } catch (e) {
       lastErr = e;
       if (attempt < retries) {
-        await new Promise(r => setTimeout(r, 50));
+        const delay = 100 * Math.pow(2, attempt - 1);
+        await new Promise(r => setTimeout(r, delay));
       }
     }
   }
